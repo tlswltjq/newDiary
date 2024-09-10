@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class Todo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    double todoId;
+    Integer todoId;
     @Column
     String todoTitle;
     @Column
