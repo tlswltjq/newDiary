@@ -3,11 +3,11 @@ package org.example.newdiary.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.newdiary.entity.Todo;
-//import org.example.newdiary.repository.TodoRepository;
 import org.example.newdiary.repository.TodoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -23,7 +23,9 @@ public class TodoService {
         return todoRepository.save(newTodo);
     }
 
-    //    public Todo getTodo(){}
+    public Todo getTodo(Integer todoId) {
+        return todoRepository.findById(todoId).orElseThrow(() -> new NoSuchElementException("Wrong Id"));
+    }
 //    public List<Todo> getTodoList(){}
 //    public Todo updateTodo(){}
 //    public Todo deleteTodo(){}
