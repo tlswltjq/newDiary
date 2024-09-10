@@ -19,7 +19,8 @@ public class Todo {
     String todoTitle;
     @Column
     boolean done;
-
+    @Column
+    Integer listId; //사용자가 여러 todoList를 구성할 수 있도록 todoList의 식별자 필드 추가함
     private void toggle() {
         this.done = !this.done;
     }

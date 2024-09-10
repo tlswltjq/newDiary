@@ -15,10 +15,11 @@ import java.util.NoSuchElementException;
 public class TodoService {
     private final TodoRepository todoRepository;
 
-    public Todo createTodo(String todoTitle) {
+    public Todo createTodo(String todoTitle,Integer listId) {
         Todo newTodo = new Todo().builder()
                 .todoTitle(todoTitle)
                 .done(false)
+                .listId(listId)
                 .build();
         return todoRepository.save(newTodo);
     }
@@ -26,7 +27,9 @@ public class TodoService {
     public Todo getTodo(Integer todoId) {
         return todoRepository.findById(todoId).orElseThrow(() -> new NoSuchElementException("Wrong Id"));
     }
-//    public List<Todo> getTodoList(){}
+    public List<Todo> getTodoList(Integer listId){
+        return todoRepository.findByListId(listId);
+    }
 //    public Todo updateTodo(){}
 //    public Todo deleteTodo(){}
 }
