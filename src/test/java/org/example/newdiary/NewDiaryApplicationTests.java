@@ -66,7 +66,7 @@ class NewDiaryApplicationTests {
     void todoListGetTest() {
         //given Todo가 저장되고 엔티티가 저장될 todoList의 아이디가 제공되면
         Integer listId = 100;
-        int number =3;
+        int number = 3;
         createTestTodoListDate(number, listId);
         //when TodoList의 아이디를 이용해 해당 리스트에 포함된 모든 todo가 리스트로 반환하면.
         List<Todo> todoList = todoService.getTodoList(listId);
@@ -74,12 +74,14 @@ class NewDiaryApplicationTests {
         Assertions.assertThat(todoList.size()).isEqualTo(number);
     }
 
+    /**
+    리스트 아이디 listId에 n개 Todo를 생성해주는 메서드
+     */
     private void createTestTodoListDate(int number, Integer listId) {
         for (int i = 0; i < number; i++) {
             String title = "newTodo" + (i + 1);
             todoService.createTodo(title, listId);
             log.info("todo : {}생성 완료", title);
         }
-
     }
 }
