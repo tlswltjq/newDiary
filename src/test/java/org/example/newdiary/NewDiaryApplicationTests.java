@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 @Slf4j
 @SpringBootTest
 class NewDiaryApplicationTests {
@@ -34,7 +36,7 @@ class NewDiaryApplicationTests {
         String title = "todo1";
 
         //when Todo를 생성하고 저장할 수 있다.
-        Todo savedTodo = todoService.createTodo(title);
+        Todo savedTodo = todoService.createTodo(title, 1);
 
 
         log.info("title : {}, savedTodo.title : {}", title, savedTodo.getTodoTitle());
@@ -43,13 +45,13 @@ class NewDiaryApplicationTests {
     }
 
     @Test
-    @DisplayName("단일 Todo 가져오기")
+    @DisplayName("단일 Todo 조회하기")
     void todoGetTest() {
         //given 엔티티가 저장되고 엔티티의 아이디가 주어지면
         String title = "newTodo";
         for (int i = 0; i < 3; i++) {
             // newTodo1~3 생성 및 저장
-            todoService.createTodo(title + (i + 1));
+            todoService.createTodo(title + (i + 1), 1);
         }
         //when 해당 아이디를 이용해 엔티티를 가져올 수 있다.
         for (int i = 0; i < 3; i++) {
@@ -57,5 +59,27 @@ class NewDiaryApplicationTests {
             //then 검색된 엔티티의 타이틀과 생성한 엔티티의 타이틀은 같아야한다.
             Assertions.assertThat(todo.getTodoTitle()).isEqualTo(title + (i + 1));
         }
+    }
+
+    @Test
+    @DisplayName("다건 Todo 조회하기")
+    void todoListGetTest() {
+        //given Todo가 저장되고 엔티티가 저장될 todoList의 아이디가 제공되면
+        Integer listId = 100;
+        int number =3;
+        createTestTodoListDate(number, listId);
+        //when TodoList의 아이디를 이용해 해당 리스트에 포함된 모든 todo가 리스트로 반환하면.
+        List<Todo> todoList = todoService.getTodoList(listId);
+        //then 생성한 todo의 개수와 리스트의 크기는 같아야한다.
+        Assertions.assertThat(todoList.size()).isEqualTo(number);
+    }
+
+    private void createTestTodoListDate(int number, Integer listId) {
+        for (int i = 0; i < number; i++) {
+            String title = "newTodo" + (i + 1);
+            todoService.createTodo(title, listId);
+            log.info("todo : {}생성 완료", title);
+        }
+
     }
 }
