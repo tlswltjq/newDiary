@@ -19,13 +19,15 @@ public class Todo {
     String todoTitle;
     @Column
     Boolean done;
-    @Column
-    Integer listId; //사용자가 여러 todoList를 구성할 수 있도록 todoList의 식별자 필드 추가함
+    @ManyToOne
+    @JoinColumn(name = "list_id")
+    TodoList listId;
+
     public void toggle() {
         this.done = !this.done;
     }
 
-    public Todo updateTitle(String newTitle){
+    public Todo updateTitle(String newTitle) {
         this.todoTitle = newTitle;
         return this;
     }
