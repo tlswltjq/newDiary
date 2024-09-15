@@ -21,6 +21,6 @@ public class TodoList {
     //투두리스트 명
     @Column
     String listName;
-    @OneToMany(mappedBy = "listId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "listId", cascade = CascadeType.ALL)
     List<Todo> todos;
 }

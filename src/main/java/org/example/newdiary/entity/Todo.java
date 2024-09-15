@@ -20,7 +20,7 @@ public class Todo {
     @Column
     Boolean done;
     @ManyToOne
-    @JoinColumn(name = "list_id")
+    @JoinColumn(name = "listId")
     TodoList listId;
 
     public void toggle() {

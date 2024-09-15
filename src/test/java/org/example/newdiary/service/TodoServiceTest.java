@@ -1,5 +1,7 @@
 package org.example.newdiary.service;
 
+import org.assertj.core.api.Assertions;
+import org.example.newdiary.entity.Todo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +16,20 @@ class TodoServiceTest {
     @Test
     @DisplayName("List없이 Todo 바로 생성하기")
     void createTodoWithoutList() {
+        //given 생성할 Todo명이 주어지고
+        String todoTitle = "newTitle";
 
-        assertThat(true).isFalse();
+        //when Todo를 생성하면
+        Todo todo = todoService.createTodo(todoTitle);
+
+        //then NewTodo!리스트에 속한 Todo가 생성된다.
+        Todo retrived = todoService.getTodo(todo.getTodoId());
+
+        Assertions.assertThat(retrived).isNotNull();
+        Assertions.assertThat(retrived.getTodoTitle()).isEqualTo(todoTitle);
+        Assertions.assertThat(retrived.getListId()).isNotNull();
+        Assertions.assertThat(retrived.getListId().getListName()).isEqualTo("NewTodo!");
+
     }
     @Test
     @DisplayName("List에 Todo추가하기")
