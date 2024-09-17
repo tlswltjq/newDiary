@@ -20,6 +20,6 @@ public class TodoList {
     @Column
     private String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "todoList", cascade = CascadeType.ALL)
     List<Todo> todoList = new ArrayList<>();
 }
