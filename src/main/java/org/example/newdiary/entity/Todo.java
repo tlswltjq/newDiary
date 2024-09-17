@@ -3,10 +3,12 @@ package org.example.newdiary.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Todo {
@@ -23,4 +25,19 @@ public class Todo {
     @ManyToOne
     @JoinColumn(name = "todo_list_id")
     private TodoList todoList;
+
+    public Todo done() {
+        this.isDone = true;
+        return this;
+    }
+
+    public Todo unDone() {
+        this.isDone = false;
+        return this;
+    }
+
+    public Todo updateDescription(String newDescription) {
+        this.description = newDescription;
+        return this;
+    }
 }
