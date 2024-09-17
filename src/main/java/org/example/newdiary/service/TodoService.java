@@ -7,6 +7,7 @@ import org.example.newdiary.entity.TodoList;
 import org.example.newdiary.repository.TodoListRepository;
 import org.example.newdiary.repository.TodoRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.NoSuchElementException;
 
 @Slf4j
@@ -17,10 +18,7 @@ public class TodoService {
     private final TodoListRepository todoListRepository;
 
     public Todo createTodo(String todoTitle) {
-        TodoList todoList = TodoList.builder()
-                .listName("NewTodo!")
-                .build();
-        todoListRepository.save(todoList);
+        TodoList todoList = createTodoList();
 
         Todo newTodo = Todo.builder()
                 .todoTitle(todoTitle)
@@ -31,6 +29,19 @@ public class TodoService {
     }
 
     public Todo getTodo(Integer todoId) {
-        return todoRepository.findById(todoId).orElseThrow(()->new NoSuchElementException("Wrong TodoId"));
+        return todoRepository.findById(todoId).orElseThrow(() -> new NoSuchElementException("Wrong TodoId"));
+    }
+
+    public TodoList createTodoList() {
+        TodoList todoList = TodoList.builder()
+                .listTitle("NewTodoList!")
+                .build();
+        return todoListRepository.save(todoList);
+    }
+    public TodoList createTodoList(String title) {
+        TodoList todoList = TodoList.builder()
+                .listTitle(title)
+                .build();
+        return todoListRepository.save(todoList);
     }
 }

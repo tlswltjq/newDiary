@@ -20,7 +20,7 @@ public class TodoList {
     Integer listId;
     //투두리스트 명
     @Column
-    String listName;
+    String listTitle;
     @OneToMany(mappedBy = "listId", cascade = CascadeType.ALL)
     List<Todo> todos;
 }

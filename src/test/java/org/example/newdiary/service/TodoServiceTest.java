@@ -2,6 +2,7 @@ package org.example.newdiary.service;
 
 import org.assertj.core.api.Assertions;
 import org.example.newdiary.entity.Todo;
+import org.example.newdiary.entity.TodoList;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ class TodoServiceTest {
         Assertions.assertThat(retrived).isNotNull();
         Assertions.assertThat(retrived.getTodoTitle()).isEqualTo(todoTitle);
         Assertions.assertThat(retrived.getListId()).isNotNull();
-        Assertions.assertThat(retrived.getListId().getListName()).isEqualTo("NewTodo!");
+        Assertions.assertThat(retrived.getListId().getListTitle()).isEqualTo("NewTodoList!");
 
     }
     @Test
@@ -39,7 +40,23 @@ class TodoServiceTest {
     @Test
     @DisplayName("빈 List 생성하기")
     void createNewTodoList(){
-        assertThat(true).isFalse();
+        //given
+        //when 빈 List를 생성하면
+        TodoList todoList = todoService.createTodoList();
+        //than Title이 NewTodoList!인 새 List가 생성된다.
+        Assertions.assertThat(todoList).isNotNull();
+        Assertions.assertThat(todoList.getListTitle()).isEqualTo("NewTodoList!");
+    }
+    @Test
+    @DisplayName("Title이 주어진 빈 List 생성하기")
+    void createNewTodoListWithTitle(){
+        //given 생성할 TodoList의 Title이 주어지고
+        String title = "todotitle";
+        //when 빈 List를 생성하면
+        TodoList todoList = todoService.createTodoList(title);
+        //than 주어진 Title이 Title인 새 List가 생성된다.
+        Assertions.assertThat(todoList).isNotNull();
+        Assertions.assertThat(todoList.getListTitle()).isEqualTo(title);
     }
     @Test
     @DisplayName("Todo완료하기")
@@ -70,6 +87,9 @@ class TodoServiceTest {
 //    @Test
 //    @DisplayName("")
 //    void (){
+//    //given
+//    //when
+//    //than
 //        assertThat(true).isFalse();
 //    }
 }
