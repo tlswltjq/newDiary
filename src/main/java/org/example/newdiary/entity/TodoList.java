@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "todo_list")
 public class TodoList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
