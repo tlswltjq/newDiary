@@ -1,5 +1,6 @@
 package org.example.newdiary.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.newdiary.entity.Todo;
 import org.example.newdiary.entity.TodoList;
@@ -44,8 +45,8 @@ public class TodoService {
         return todoRepository.save(todo.updateDescription(newDescription));
     }
 
+    @Transactional
     public void deleteTodo(Long todoId) {
-        Todo todo = getTodo(todoId);
-        todoRepository.delete(todo);
+        todoRepository.deleteById(todoId);
     }
 }

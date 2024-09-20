@@ -91,10 +91,16 @@ class TodoServiceTest {
     @Test
     @DisplayName("Todo를 삭제할 수 있다.")
     void deleteTodo() {
-        // TODO: 17/9/2024 지연로딩과 트랜잭션 세션을 키워드로 조사 필요 
         //given 삭제할 Todo의 Id가 주어지고
+        TodoList todoList = todoListService.createTodoList("testList");
+        Todo todo = todoService.createTodo("testTodo", todoList.getId());
+
         //when Id를 이용해 삭제하면
-        //than 에러가 반환된다.
-        Assertions.assertThat(true).isFalse();
+        todoService.deleteTodo(todo.getId());
+
+        //then 검색된 리스트의 todos.size()는 0이다.
+        TodoList updatedTodoList = todoListService.getTodoList(todoList.getId());
+        List<Todo> result = updatedTodoList.getTodoList();
+        Assertions.assertThat(result.size()).isEqualTo(0);
     }
 }

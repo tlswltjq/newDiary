@@ -22,6 +22,6 @@ public class TodoList {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "todoList", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "todoList", fetch = FetchType.EAGER)
     List<Todo> todoList = new ArrayList<>();
 }
