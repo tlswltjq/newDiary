@@ -23,6 +23,11 @@ public class TodoList {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "todoList", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "todoList", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     List<Todo> todoList = new ArrayList<>();
+
+    public TodoList updateName(String newName) {
+        this.name = newName;
+        return this;
+    }
 }
