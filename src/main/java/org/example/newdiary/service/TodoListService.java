@@ -22,4 +22,14 @@ public class TodoListService {
     public TodoList getTodoList(Long listId) {
         return todoListRepository.findById(listId).orElseThrow(() -> new NoSuchElementException("Wrong ListId"));
     }
+
+    public TodoList updateTodoListName(String newName, Long id) {
+        TodoList todoList = getTodoList(id);
+        TodoList updated = todoList.updateName(newName);
+        return todoListRepository.save(updated);
+    }
+
+    public void deleteTodoList(Long id) {
+        todoListRepository.deleteById(id);
+    }
 }

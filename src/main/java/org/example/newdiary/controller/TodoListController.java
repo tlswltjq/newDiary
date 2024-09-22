@@ -3,14 +3,10 @@ package org.example.newdiary.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.newdiary.dto.GetTodoListResponse;
-import org.example.newdiary.dto.GetTodoResponse;
 import org.example.newdiary.entity.TodoList;
 import org.example.newdiary.service.TodoListService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -18,9 +14,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/list")
 public class TodoListController {
     private final TodoListService todoListService;
-    @GetMapping()
+    @GetMapping
     ResponseEntity<?> getTodoList(@RequestParam(name = "listId") Long listId){
         TodoList todoList = todoListService.getTodoList(listId);
         return ResponseEntity.ok().body(new GetTodoListResponse(todoList));
+    }
+    @PostMapping
+    ResponseEntity<?> createTodoList(@RequestParam(name = "name") String name){
+        TodoList todoList = todoListService.createTodoList(name);
+        return ResponseEntity.ok().body(todoList.getName() + " 생성완료");
+    }
+    @PutMapping("/{listId}")
+    ResponseEntity<?> updateTodoListName(@RequestParam(name = "name") String name, @PathVariable Long listId){
+        TodoList todoList = todoListService.updateTodoListName(name, listId);
+        return ResponseEntity.ok().body(new GetTodoListResponse(todoList));
+    }
+    @DeleteMapping("/{listId}")
+    ResponseEntity<?> deleteTodoList(@PathVariable Long listId){
+        todoListService.deleteTodoList(listId);
+        return ResponseEntity.ok().body(listId + "삭제 완료");
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @SpringBootTest
@@ -102,5 +103,49 @@ class TodoServiceTest {
         TodoList updatedTodoList = todoListService.getTodoList(todoList.getId());
         List<Todo> result = updatedTodoList.getTodoList();
         Assertions.assertThat(result.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("TodoList의 이름을 변경할 수 있다.")
+    void updateTodoListTitle() {
+        //given TodoList와 새 이름이 주어지고
+        TodoList todoList = todoListService.createTodoList("before");
+        String newName = "after";
+
+        //when TodoList의 이름을 변경하고 다시 검색하면
+        TodoList updated = todoListService.updateTodoListName(newName, todoList.getId());
+
+        //then 변경된 이름을 확인할 수 있다.
+        Assertions.assertThat(updated).isNotNull();
+        Assertions.assertThat(updated.getName()).isEqualTo(newName);
+    }
+
+    @Test
+    @DisplayName("TodoList를 삭제할 수 있다.")
+    void deleteTodoList() {
+        //given 삭제할 TodoList의 id가 주어지고
+        TodoList todoList = todoListService.createTodoList("list");
+        Todo todo1 = todoService.createTodo("todo1", todoList.getId());
+        Todo todo2 = todoService.createTodo("todo2", todoList.getId());
+        Todo todo3 = todoService.createTodo("todo3", todoList.getId());
+
+
+        //when id를 이용해 삭제를 하면
+        todoListService.deleteTodoList(todoList.getId());
+
+        //then 포함된 Todo와 함께 TodoList가 삭제된다.
+        Assertions.assertThatThrownBy(() -> todoListService.getTodoList(todoList.getId()))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessageContaining("Wrong ListId");
+        Assertions.assertThatThrownBy(() -> todoService.getTodo(todo1.getId()))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessageContaining("Wrong TodoId");
+        Assertions.assertThatThrownBy(() -> todoService.getTodo(todo2.getId()))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessageContaining("Wrong TodoId");
+        Assertions.assertThatThrownBy(() -> todoService.getTodo(todo2.getId()))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessageContaining("Wrong TodoId");
+
     }
 }
