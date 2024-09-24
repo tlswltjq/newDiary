@@ -32,12 +32,12 @@ public class TodoService {
 
     public Todo doneTodo(Long todoId){
         Todo todo = getTodo(todoId);
-        return todo.done();
+        return todoRepository.save(todo.done());
     }
 
     public Todo unDoneTodo(Long todoId){
         Todo todo = getTodo(todoId);
-        return todo.unDone();
+        return todoRepository.save(todo.unDone());
     }
 
     public Todo updateTodo(Long todoId, String newDescription) {
