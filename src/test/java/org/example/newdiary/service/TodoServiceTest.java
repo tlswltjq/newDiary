@@ -148,4 +148,23 @@ class TodoServiceTest {
                 .hasMessageContaining("Wrong TodoId");
 
     }
+
+    @Test
+    @DisplayName("Todo를 TodoList에 추가할 수 있다.")
+    void addTodo(){
+        //given TodoList와 추가할 Todo의 Description이 주어지고
+        TodoList todoList = todoListService.createTodoList("testlist");
+        String description = "newTodo";
+        //when TodoList의 id를 이용해 주가하고 TodoList를 검색하면
+        //then 추가한 크기의 TodoList가 반환된다.
+        todoService.createTodo(description, todoList.getId());
+        TodoList update1 = todoListService.getTodoList(todoList.getId());
+        Assertions.assertThat(update1.getTodoList().size()).isEqualTo(1);
+        todoService.createTodo(description, todoList.getId());
+        todoService.createTodo(description, todoList.getId());
+        todoService.createTodo(description, todoList.getId());
+        TodoList update2 = todoListService.getTodoList(todoList.getId());
+        Assertions.assertThat(update2.getTodoList().size()).isEqualTo(4);
+
+    }
 }
