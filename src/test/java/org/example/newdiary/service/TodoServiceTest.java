@@ -143,7 +143,7 @@ class TodoServiceTest {
         Assertions.assertThatThrownBy(() -> todoService.getTodo(todo2.getId()))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("Wrong TodoId");
-        Assertions.assertThatThrownBy(() -> todoService.getTodo(todo2.getId()))
+        Assertions.assertThatThrownBy(() -> todoService.getTodo(todo3.getId()))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("Wrong TodoId");
 
