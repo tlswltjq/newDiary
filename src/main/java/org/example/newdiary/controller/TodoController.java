@@ -39,4 +39,9 @@ public class TodoController {
         todoService.deleteTodo(todo);
         return ResponseEntity.ok().body(todo+ "삭제 완료");
     }
+    @PutMapping("/{todo}")
+    ResponseEntity<?> updateTodoDescription(@PathVariable(name = "todo") Long todo, @RequestParam(name = "desc") String desc){
+        Todo updated = todoService.updateTodo(todo, desc);
+        return ResponseEntity.ok().body(updated.getDescription());
+    }
 }
