@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "todo_list")
 public class TodoList extends Do{
-
     @Column
     private String name;
 
