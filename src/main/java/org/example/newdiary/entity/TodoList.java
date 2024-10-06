@@ -8,17 +8,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @Entity
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "todo_list")
-public class TodoList {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class TodoList extends Do{
 
     @Column
     private String name;
@@ -30,4 +26,5 @@ public class TodoList {
         this.name = newName;
         return this;
     }
+    //todo : 이후 사용자 아이디 추가 필요
 }

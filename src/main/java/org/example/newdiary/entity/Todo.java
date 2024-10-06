@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "todo")
-public class Todo {
+public class Todo extends Do{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
