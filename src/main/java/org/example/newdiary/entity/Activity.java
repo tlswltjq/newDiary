@@ -18,8 +18,9 @@ import java.time.LocalDateTime;
 public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column
     private ActivityType type;
 
