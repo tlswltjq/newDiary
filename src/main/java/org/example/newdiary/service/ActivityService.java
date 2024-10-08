@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ActivityService {
     private final ActivityRepository activityRepository;
-    private final TodoService todoService;
-    private final TodoListService todoListService;
 
     //private 이어야 하지 않은가
     public <T extends Do> Activity createActivity(T a, ActivityType type) {
@@ -22,15 +20,5 @@ public class ActivityService {
                 .timeStamp(LocalDateTime.now())
                 .build();
         return activityRepository.save(activity);
-    }
-
-    public Activity addTodoActivity(Long todoId, ActivityType type) {
-        Todo todo = todoService.getTodo(todoId);
-        return createActivity(todo, type);
-    }
-
-    public Activity addTodoListActivity(Long listId, ActivityType type){
-        TodoList list = todoListService.getTodoList(listId);
-        return createActivity(list, type);
     }
 }
