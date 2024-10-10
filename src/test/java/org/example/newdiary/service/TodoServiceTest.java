@@ -141,7 +141,7 @@ class TodoServiceTest {
         return todo;
     }
 
-    private static void setId(Object entity, Long id) {
+    private void setId(Object entity, Long id) {
         try {
             Field idField = entity.getClass().getSuperclass().getDeclaredField("id");
             idField.setAccessible(true);
