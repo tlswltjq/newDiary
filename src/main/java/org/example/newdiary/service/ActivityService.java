@@ -13,10 +13,10 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
 
     //private 이어야 하지 않은가
-    public <T extends Do> Activity createActivity(T a, ActivityType type) {
+    public <T extends Do> Activity createActivity(T somethingDo, ActivityType type) {
         Activity activity = Activity.builder()
                 .type(type)
-                .refId(a.getId())
+                .refId(somethingDo.getId())
                 .timeStamp(LocalDateTime.now())
                 .build();
         return activityRepository.save(activity);
