@@ -122,6 +122,8 @@ class TodoServiceTest {
 
         when(todoRepository.findById(1L)).thenReturn(Optional.ofNullable(todo));
 
+        todoService.deleteTodo(1L);
+
         verify(eventPublisher).publishEvent(any(NewActivityEvent.class));
         verify(todoRepository).delete(any(Todo.class));
     }
