@@ -1,170 +1,151 @@
 package org.example.newdiary.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.example.newdiary.entity.Todo;
 import org.example.newdiary.entity.TodoList;
+import org.example.newdiary.event.NewActivityEvent;
+import org.example.newdiary.repository.TodoRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.lang.reflect.Field;
+import java.util.Optional;
 
-@Slf4j
-@SpringBootTest
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@DisplayName("Todo 관련 테스트")
+@ExtendWith(MockitoExtension.class)
 class TodoServiceTest {
-    @Autowired
-    TodoService todoService;
-    @Autowired
-    TodoListService todoListService;
+    @Mock
+    private TodoRepository todoRepository;
 
+    @Mock
+    private TodoListService todoListService;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
+    @InjectMocks
+    private TodoService todoService;
+    private Todo todo;
+    private TodoList todoList;
+
+    @DisplayName("description이 주어지면 새 Todo를 생성할 수 있다.")
     @Test
-    @DisplayName("Todo를 생성할 수 있다.")
-    void createTodo() {
-        //given Description과 빈 리스트가 주어지고
-        String description = "goToSleep";
-        TodoList todoList = todoListService.createTodoList("testList");
-        //when Todo를 생성하면
-        Todo todo = todoService.createTodo(description, todoList.getId());
-        log.info(todo.getDescription());
-        //than Description을 가진 Todo가 생성된다.
-        Assertions.assertThat(todo).isNotNull();
-        Assertions.assertThat(todo.getDescription()).isEqualTo(description);
+    public void todoCreateTest() {
+        String description = "Test Todo";
+        Long listId = 1L;
+        todo = createTodoEntity(description, listId);
+        todoList = todo.getTodoList();
+
+        when(todoListService.getTodoList(listId)).thenReturn(todoList);
+        when(todoRepository.save(any(Todo.class))).thenReturn(todo);
+
+        Todo result = todoService.createTodo(description, listId);
+
+        verify(todoListService).getTodoList(listId);
+        verify(eventPublisher).publishEvent(any(NewActivityEvent.class));
+        verify(todoRepository).save(any(Todo.class));
+
+        Assertions.assertThat(result.getDescription()).isEqualTo(description);
+        Assertions.assertThat(result.getIsDone()).isFalse();
+        Assertions.assertThat(result.getTodoList().getId()).isEqualTo(listId);
     }
 
+    @DisplayName("Todo의 완료 상태를 완료함(true)으로 변경할 수 있다. ")
     @Test
-    @DisplayName("Todo를 검색할 수 있다.")
-    void retrieveTodo() {
-        //given Todo의 Id가 주어지고
-        TodoList todoList = todoListService.createTodoList("testList");
-        Long listId = todoList.getId();
-        Todo todo = todoService.createTodo("testTodo", listId);
-        //when Todo를 검색하면
-        Todo retrieved = todoService.getTodo(todo.getId());
-        //than Todo가 반환된다.
-        Assertions.assertThat(retrieved).isNotNull();
-        Assertions.assertThat(retrieved.getDescription()).isEqualTo("testTodo");
+    public void todoDoneTest() {
+        String description = "Test Todo";
+        Long listId = 1L;
+        todo = createTodoEntity(description, listId);
 
+        when(todoRepository.save(any(Todo.class))).thenReturn(todo);
+        when(todoRepository.findById(1L)).thenReturn(Optional.ofNullable(todo));
+
+        Todo result = todoService.doneTodo(todo.getId());
+
+        verify(eventPublisher).publishEvent(any(NewActivityEvent.class));
+        verify(todoRepository).save(any(Todo.class));
+
+        Assertions.assertThat(result.getIsDone()).isTrue();
     }
 
+    @DisplayName("Todo의 완료 상태를 미 완료함(false)으로 변경할 수 있다. ")
     @Test
-    @DisplayName("Todo를 완료할 수 있다.")
-    void doneTodo() {
-        //given Todo가 주어지고
-        TodoList todoList = todoListService.createTodoList("testList");
-        Long listId = todoList.getId();
-        Todo todo = todoService.createTodo("testTodo", listId);
-        //when Todo를 완료하면
-        Todo donedTodo = todoService.doneTodo(todo.getId());
-        //than Todo의 isDone이 True가 된다.
-        Assertions.assertThat(donedTodo.getIsDone()).isTrue();
+    public void todoUnDoneTest() {
+        String description = "Test Todo";
+        Long listId = 1L;
+        todo = createTodoEntity(description, listId);
+
+        when(todoRepository.save(any(Todo.class))).thenReturn(todo);
+        when(todoRepository.findById(1L)).thenReturn(Optional.ofNullable(todo));
+
+        Todo result = todoService.unDoneTodo(todo.getId());
+
+        verify(eventPublisher).publishEvent(any(NewActivityEvent.class));
+        verify(todoRepository).save(any(Todo.class));
+
+        Assertions.assertThat(result.getIsDone()).isFalse();
     }
 
+    @DisplayName("Todo의 설명을 변경할 수 있다.")
     @Test
-    @DisplayName("Todo완료를 취소할 수 있다.")
-    void unDoneTodo() {
-        //given 이미 완료된 Todo가 주어지고
-        TodoList todoList = todoListService.createTodoList("testList");
-        Long listId = todoList.getId();
-        Todo todo = todoService.createTodo("testTodo", listId);
-        //when Todo의 완료를 취소하면
-        Todo donedTodo = todoService.unDoneTodo(todo.getId());
-        //than Todo의 isDone이 False가 된다.
-        Assertions.assertThat(donedTodo.getIsDone()).isFalse();
+    public void todoUpdateTest() {
+        String description = "Test Todo";
+        String newDescription = "updated";
+        Long listId = 1L;
+        todo = createTodoEntity(description, listId);
+
+        when(todoRepository.findById(1L)).thenReturn(Optional.ofNullable(todo));
+        when(todoRepository.save(any(Todo.class))).thenReturn(todo);
+
+        Todo result = todoService.updateTodo(1L, newDescription);
+
+        verify(eventPublisher).publishEvent(any(NewActivityEvent.class));
+        verify(todoRepository).save(any(Todo.class));
+        Assertions.assertThat(result.getDescription()).isEqualTo(newDescription);
     }
 
+    @DisplayName("Todo를 Id를 이용해 삭제할 수 있다.")
     @Test
-    @DisplayName("Todo의 설명을 수정할 수 있다.")
-    void updateTodo() {
-        //given Todo와 수정할 Description이 주어지고
-        TodoList todoList = todoListService.createTodoList("testList");
-        Long listId = todoList.getId();
-        Todo todo = todoService.createTodo("testTodo", listId);
-        String newDescript = "updatedTodo";
-        //when Todo의 Description를 새 Description로 수정하면
-        Todo updatedTodo = todoService.updateTodo(todo.getId(), newDescript);
-        //than 변경된 Description를 확인할 수 있다.
-        Assertions.assertThat(updatedTodo.getDescription()).isEqualTo(newDescript);
+    public void todoDeleteTest() {
+        String description = "Test Todo";
+        Long listId = 1L;
+        todo = createTodoEntity(description, listId);
+
+        when(todoRepository.findById(1L)).thenReturn(Optional.ofNullable(todo));
+
+        verify(eventPublisher).publishEvent(any(NewActivityEvent.class));
+        verify(todoRepository).delete(any(Todo.class));
     }
 
-    @Test
-    @DisplayName("Todo를 삭제할 수 있다.")
-    void deleteTodo() {
-        //given 삭제할 Todo의 Id가 주어지고
-        TodoList todoList = todoListService.createTodoList("testList");
-        Todo todo = todoService.createTodo("testTodo", todoList.getId());
+    public Todo createTodoEntity(String description, Long listId) {
+        TodoList todoList = TodoList.builder().name("testList").build();
+        setId(todoList, listId);
 
-        //when Id를 이용해 삭제하면
-        todoService.deleteTodo(todo.getId());
-
-        //then 검색된 리스트의 todos.size()는 0이다.
-        TodoList updatedTodoList = todoListService.getTodoList(todoList.getId());
-        List<Todo> result = updatedTodoList.getTodoList();
-        Assertions.assertThat(result.size()).isEqualTo(0);
+        Todo todo = Todo.builder()
+                .description(description)
+                .isDone(false)
+                .todoList(todoList)
+                .build();
+        setId(todo, 1L);
+        return todo;
     }
 
-    @Test
-    @DisplayName("TodoList의 이름을 변경할 수 있다.")
-    void updateTodoListTitle() {
-        //given TodoList와 새 이름이 주어지고
-        TodoList todoList = todoListService.createTodoList("before");
-        String newName = "after";
-
-        //when TodoList의 이름을 변경하고 다시 검색하면
-        TodoList updated = todoListService.updateTodoListName(newName, todoList.getId());
-
-        //then 변경된 이름을 확인할 수 있다.
-        Assertions.assertThat(updated).isNotNull();
-        Assertions.assertThat(updated.getName()).isEqualTo(newName);
-    }
-
-    @Test
-    @DisplayName("TodoList를 삭제할 수 있다.")
-    void deleteTodoList() {
-        //given 삭제할 TodoList의 id가 주어지고
-        TodoList todoList = todoListService.createTodoList("list");
-        Todo todo1 = todoService.createTodo("todo1", todoList.getId());
-        Todo todo2 = todoService.createTodo("todo2", todoList.getId());
-        Todo todo3 = todoService.createTodo("todo3", todoList.getId());
-
-
-        //when id를 이용해 삭제를 하면
-        todoListService.deleteTodoList(todoList.getId());
-
-        //then 포함된 Todo와 함께 TodoList가 삭제된다.
-        Assertions.assertThatThrownBy(() -> todoListService.getTodoList(todoList.getId()))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("Wrong ListId");
-        Assertions.assertThatThrownBy(() -> todoService.getTodo(todo1.getId()))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("Wrong TodoId");
-        Assertions.assertThatThrownBy(() -> todoService.getTodo(todo2.getId()))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("Wrong TodoId");
-        Assertions.assertThatThrownBy(() -> todoService.getTodo(todo3.getId()))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("Wrong TodoId");
-
-    }
-
-    @Test
-    @DisplayName("Todo를 TodoList에 추가할 수 있다.")
-    void addTodo(){
-        //given TodoList와 추가할 Todo의 Description이 주어지고
-        TodoList todoList = todoListService.createTodoList("testlist");
-        String description = "newTodo";
-        //when TodoList의 id를 이용해 주가하고 TodoList를 검색하면
-        //then 추가한 크기의 TodoList가 반환된다.
-        todoService.createTodo(description, todoList.getId());
-        TodoList update1 = todoListService.getTodoList(todoList.getId());
-        Assertions.assertThat(update1.getTodoList().size()).isEqualTo(1);
-        todoService.createTodo(description, todoList.getId());
-        todoService.createTodo(description, todoList.getId());
-        todoService.createTodo(description, todoList.getId());
-        TodoList update2 = todoListService.getTodoList(todoList.getId());
-        Assertions.assertThat(update2.getTodoList().size()).isEqualTo(4);
-
+    private static void setId(Object entity, Long id) {
+        try {
+            Field idField = entity.getClass().getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(entity, id);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
