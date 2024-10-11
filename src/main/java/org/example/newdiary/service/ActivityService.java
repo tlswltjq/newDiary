@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class ActivityService {
     private final ActivityRepository activityRepository;
 
-    //private 이어야 하지 않은가
     public <T extends Do> Activity createActivity(T somethingDo, ActivityType type) {
         Activity activity = Activity.builder()
                 .type(type)
