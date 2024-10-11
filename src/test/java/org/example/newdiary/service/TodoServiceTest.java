@@ -1,6 +1,7 @@
 package org.example.newdiary.service;
 
 import org.assertj.core.api.Assertions;
+import org.example.newdiary.Util;
 import org.example.newdiary.entity.Todo;
 import org.example.newdiary.entity.TodoList;
 import org.example.newdiary.event.NewActivityEvent;
@@ -13,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("Todo 관련 테스트")
 @ExtendWith(MockitoExtension.class)
 class TodoServiceTest {
+    private Util util = new Util();
     @Mock
     private TodoRepository todoRepository;
 
@@ -42,7 +43,7 @@ class TodoServiceTest {
     public void todoCreateTest() {
         String description = "Test Todo";
         Long listId = 1L;
-        todo = createTodoEntity(description, listId);
+        todo = util.createTodoEntity(description, listId);
         todoList = todo.getTodoList();
 
         when(todoListService.getTodoList(listId)).thenReturn(todoList);
@@ -64,7 +65,7 @@ class TodoServiceTest {
     public void todoDoneTest() {
         String description = "Test Todo";
         Long listId = 1L;
-        todo = createTodoEntity(description, listId);
+        todo = util.createTodoEntity(description, listId);
 
         when(todoRepository.save(any(Todo.class))).thenReturn(todo);
         when(todoRepository.findById(1L)).thenReturn(Optional.ofNullable(todo));
@@ -82,7 +83,7 @@ class TodoServiceTest {
     public void todoUnDoneTest() {
         String description = "Test Todo";
         Long listId = 1L;
-        todo = createTodoEntity(description, listId);
+        todo = util.createTodoEntity(description, listId);
 
         when(todoRepository.save(any(Todo.class))).thenReturn(todo);
         when(todoRepository.findById(1L)).thenReturn(Optional.ofNullable(todo));
@@ -101,7 +102,7 @@ class TodoServiceTest {
         String description = "Test Todo";
         String newDescription = "updated";
         Long listId = 1L;
-        todo = createTodoEntity(description, listId);
+        todo = util.createTodoEntity(description, listId);
 
         when(todoRepository.findById(1L)).thenReturn(Optional.ofNullable(todo));
         when(todoRepository.save(any(Todo.class))).thenReturn(todo);
@@ -118,7 +119,7 @@ class TodoServiceTest {
     public void todoDeleteTest() {
         String description = "Test Todo";
         Long listId = 1L;
-        todo = createTodoEntity(description, listId);
+        todo = util.createTodoEntity(description, listId);
 
         when(todoRepository.findById(1L)).thenReturn(Optional.ofNullable(todo));
 
@@ -126,28 +127,5 @@ class TodoServiceTest {
 
         verify(eventPublisher).publishEvent(any(NewActivityEvent.class));
         verify(todoRepository).delete(any(Todo.class));
-    }
-
-    public Todo createTodoEntity(String description, Long listId) {
-        TodoList todoList = TodoList.builder().name("testList").build();
-        setId(todoList, listId);
-
-        Todo todo = Todo.builder()
-                .description(description)
-                .isDone(false)
-                .todoList(todoList)
-                .build();
-        setId(todo, 1L);
-        return todo;
-    }
-
-    private void setId(Object entity, Long id) {
-        try {
-            Field idField = entity.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(entity, id);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
