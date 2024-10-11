@@ -19,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisplayName("Activity 관련 테스트")
 @ExtendWith(MockitoExtension.class)
 class ActivityServiceTest {
     private Util util = new Util();

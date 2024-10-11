@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +16,7 @@ public class TodoListService {
     private final TodoListRepository todoListRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public TodoList createTodoList(String name){
+    public TodoList createTodoList(String name) {
         TodoList todoList = TodoList.builder()
                 .name(name)
                 .build();

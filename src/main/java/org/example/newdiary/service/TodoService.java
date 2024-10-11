@@ -30,7 +30,6 @@ public class TodoService {
         return todoRepository.save(todo);
     }
 
-
     public Todo getTodo(long todoId) {
         return todoRepository.findById(todoId).orElseThrow(() -> new NoSuchElementException("Wrong TodoId"));
     }

@@ -14,5 +14,4 @@ public class NewActivityEvent<T> extends ApplicationEvent {
         this.entity = entity;
         this.type = type;
     }
-
 }
