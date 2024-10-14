@@ -8,10 +8,10 @@ import org.example.newdiary.entity.Todo;
 import org.example.newdiary.entity.TodoList;
 import org.example.newdiary.repository.ActivityRepository;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -66,8 +66,9 @@ class ActivityServiceTest {
     }
 
     @DisplayName("현재 월로부터 n간의 Activity를 조회할 수 있다.")
-    @Test
-    public void activityRetrievedByNMonthTest() {
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5})
+    public void activityRetrievedByNMonthTest(int month) {
         LocalDateTime now = LocalDateTime.of(2024, 10, 10, 12, 30, 0);
         List<Activity> activities = new ArrayList<>();
 
@@ -85,9 +86,9 @@ class ActivityServiceTest {
                             .toList();
                 });
 
-        List<Activity> result = activityService.getActivitiesWithinMonths(3);
+        List<Activity> result = activityService.getActivitiesWithinMonths(month);
 
         verify(activityRepository).findActivitiesWithinMonths(any(LocalDateTime.class), any(LocalDateTime.class));
-        Assertions.assertThat(result).hasSize(6);
+        Assertions.assertThat(result).hasSize(month*2);
     }
 }
