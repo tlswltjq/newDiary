@@ -8,12 +8,17 @@ import org.example.newdiary.entity.Todo;
 import org.example.newdiary.entity.TodoList;
 import org.example.newdiary.repository.ActivityRepository;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -58,5 +63,31 @@ class ActivityServiceTest {
         verify(activityRepository).save(any(Activity.class));
         Assertions.assertThat(result.getRefId()).isEqualTo(todoList.getId());
         Assertions.assertThat(result.getType()).isEqualTo(type);
+    }
+
+    @DisplayName("현재 월로부터 n간의 Activity를 조회할 수 있다.")
+    @Test
+    public void activityRetrievedByNMonthTest() {
+        LocalDateTime now = LocalDateTime.of(2024, 10, 10, 12, 30, 0);
+        List<Activity> activities = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            activities.add(util.setTimeStamp(util.createActivityEntity(util.createTodoEntity("newTodo" + i, 1L), ActivityType.todo_add), now.minusMonths(i)));
+            activities.add(util.setTimeStamp(util.createActivityEntity(util.createTodoListEntity("testList" + i), ActivityType.todo_add), now.minusMonths(i)));
+        }
+
+        when(activityRepository.findActivitiesWithinMonths(any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenAnswer(invocation -> {
+                    LocalDateTime startDate = invocation.getArgument(0);
+                    LocalDateTime endDate = invocation.getArgument(1);
+                    return activities.stream()
+                            .filter(activity -> !activity.getTimeStamp().isBefore(startDate) && !activity.getTimeStamp().isAfter(endDate))
+                            .toList();
+                });
+
+        List<Activity> result = activityService.getActivitiesWithinMonths(3);
+
+        verify(activityRepository).findActivitiesWithinMonths(any(LocalDateTime.class), any(LocalDateTime.class));
+        Assertions.assertThat(result).hasSize(6);
     }
 }
