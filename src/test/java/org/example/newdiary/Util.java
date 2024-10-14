@@ -40,4 +40,14 @@ public class Util {
             throw new RuntimeException(e);
         }
     }
+    public Activity setTimeStamp(Activity entity, LocalDateTime date) {
+        try {
+            Field dateField = entity.getClass().getDeclaredField("timeStamp");
+            dateField.setAccessible(true);
+            dateField.set(entity, date);
+            return entity;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
