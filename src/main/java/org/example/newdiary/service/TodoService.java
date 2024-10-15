@@ -26,7 +26,7 @@ public class TodoService {
                 .isDone(false)
                 .todoList(todoList)
                 .build();
-        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.todo_add));
+        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.TODO_ADD));
         return todoRepository.save(todo);
     }
 
@@ -36,26 +36,26 @@ public class TodoService {
 
     public Todo doneTodo(Long todoId){
         Todo todo = getTodo(todoId);
-        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.todo_done));
+        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.TODO_DONE));
         return todoRepository.save(todo.done());
     }
 
     public Todo unDoneTodo(Long todoId){
         Todo todo = getTodo(todoId);
-        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.todo_unDone));
+        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.TODO_UNDONE));
         return todoRepository.save(todo.unDone());
     }
 
     public Todo updateTodo(Long todoId, String newDescription) {
         Todo todo = getTodo(todoId);
-        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.todo_update));
+        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.TODO_UPDATE));
         return todoRepository.save(todo.updateDescription(newDescription));
     }
 
     @Transactional
     public void deleteTodo(Long todoId) {
         Todo todo = getTodo(todoId);
-        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.todo_delete));
+        eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.TODO_DELETE));
         todoRepository.delete(todo);
     }
 }

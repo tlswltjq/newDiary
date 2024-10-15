@@ -73,8 +73,8 @@ class ActivityServiceTest {
         List<Activity> activities = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
-            activities.add(util.setTimeStamp(util.createActivityEntity(util.createTodoEntity("newTodo" + i, 1L), ActivityType.todo_add), now.minusMonths(i)));
-            activities.add(util.setTimeStamp(util.createActivityEntity(util.createTodoListEntity("testList" + i), ActivityType.todo_add), now.minusMonths(i)));
+            activities.add(util.setTimeStamp(util.createActivityEntity(util.createTodoEntity("newTodo" + i, 1L), ActivityType.TODO_ADD), now.minusMonths(i)));
+            activities.add(util.setTimeStamp(util.createActivityEntity(util.createTodoListEntity("testList" + i), ActivityType.TODO_ADD), now.minusMonths(i)));
         }
 
         when(activityRepository.findActivitiesWithinMonths(any(LocalDateTime.class), any(LocalDateTime.class)))

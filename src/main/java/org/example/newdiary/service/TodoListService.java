@@ -21,7 +21,7 @@ public class TodoListService {
                 .name(name)
                 .build();
         TodoList savedTodoList = todoListRepository.save(todoList);
-        eventPublisher.publishEvent(new NewActivityEvent<>(this, savedTodoList, ActivityType.todoList_create));
+        eventPublisher.publishEvent(new NewActivityEvent<>(this, savedTodoList, ActivityType.TODOLIST_CREATE));
         return savedTodoList;
     }
 
@@ -32,13 +32,13 @@ public class TodoListService {
     public TodoList updateTodoListName(String newName, Long id) {
         TodoList todoList = getTodoList(id);
         TodoList updated = todoList.updateName(newName);
-        eventPublisher.publishEvent(new NewActivityEvent<>(this, updated, ActivityType.todoList_rename));
+        eventPublisher.publishEvent(new NewActivityEvent<>(this, updated, ActivityType.TODOLIST_RENAME));
         return todoListRepository.save(updated);
     }
 
     public void deleteTodoList(Long id) {
         TodoList todoList = getTodoList(id);
-        eventPublisher.publishEvent(new NewActivityEvent<>(this, todoList, ActivityType.todoList_delete));
+        eventPublisher.publishEvent(new NewActivityEvent<>(this, todoList, ActivityType.TODO_DELETE));
         todoListRepository.delete(todoList);
     }
 }
