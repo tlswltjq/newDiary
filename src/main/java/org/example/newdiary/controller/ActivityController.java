@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +38,7 @@ public class ActivityController {
                 Todo todo = todoService.getTodo(refId);
                 return new GetActivityResponse(activity, todo);
 
-//            }else if (category == ActivityType.Category.TODOLIST){    //확장시 이와같이 검사 필요
+//            }else if (category == ActivityType.Category.TODOLIST){    //확장시 이와 같이 검사 필요
             }else{
                 TodoList todoList = todoListService.getTodoList(refId);
                 return new GetActivityResponse(activity, todoList);

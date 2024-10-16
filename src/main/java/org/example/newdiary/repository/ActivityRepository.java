@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
-    @Query("SELECT a FROM Activity a WHERE a.timeStamp BETWEEN :startDate AND :endDate")
+    @Query("SELECT a FROM Activity a WHERE a.timeStamp BETWEEN :startDate AND :endDate ORDER BY a.timeStamp ASC")
     List<Activity> findActivitiesWithinMonths(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }
