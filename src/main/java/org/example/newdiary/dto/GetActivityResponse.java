@@ -10,18 +10,18 @@ import java.time.LocalDateTime;
 
 @Data
 public class GetActivityResponse {
-    private final String DoName;
+    private final String doName;
     private final String type;
     private final LocalDateTime timeStamp;
 
     public GetActivityResponse(Activity activity, Todo todo) {
-        this.DoName = todo.getDescription();
+        this.doName = todo.getDescription();
         this.type = activity.getType().toString();
         this.timeStamp = activity.getTimeStamp();
     }
 
     public GetActivityResponse(Activity activity, TodoList list) {
-        this.DoName = list.getName();
+        this.doName = list.getName();
         this.type = activity.getType().toString();
         this.timeStamp = activity.getTimeStamp();
     }
