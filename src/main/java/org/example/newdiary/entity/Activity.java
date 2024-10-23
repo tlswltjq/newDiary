@@ -28,6 +28,9 @@ public class Activity {
     private Long refId;
 
     @Column
+    private String description;
+
+    @Column
     private LocalDateTime timeStamp;
 
     //todo : 이후 사용자 아이디 추가 필요
