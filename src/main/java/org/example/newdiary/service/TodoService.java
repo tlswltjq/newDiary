@@ -21,26 +21,26 @@ public class TodoService {
 
     public Todo createTodo(String description, Long listId) {
         TodoList todoList = todoListService.getTodoList(listId);
-        Todo todo = Todo.builder()
+        Todo todo = todoRepository.save(Todo.builder()
                 .description(description)
                 .isDone(false)
                 .todoList(todoList)
-                .build();
+                .build());
         eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.TODO_ADD));
-        return todoRepository.save(todo);
+        return todo;
     }
 
     public Todo getTodo(long todoId) {
-        return todoRepository.findById(todoId).orElseThrow(() -> new NoSuchElementException("Wrong TodoId"));
+        return todoRepository.findById(todoId).orElseThrow(() -> new NoSuchElementException(todoId + " Wrong TodoId"));
     }
 
-    public Todo doneTodo(Long todoId){
+    public Todo doneTodo(Long todoId) {
         Todo todo = getTodo(todoId);
         eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.TODO_DONE));
         return todoRepository.save(todo.done());
     }
 
-    public Todo unDoneTodo(Long todoId){
+    public Todo unDoneTodo(Long todoId) {
         Todo todo = getTodo(todoId);
         eventPublisher.publishEvent(new NewActivityEvent<>(this, todo, ActivityType.TODO_UNDONE));
         return todoRepository.save(todo.unDone());
