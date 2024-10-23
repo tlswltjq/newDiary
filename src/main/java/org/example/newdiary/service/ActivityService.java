@@ -18,6 +18,7 @@ public class ActivityService {
         Activity activity = Activity.builder()
                 .type(type)
                 .refId(somethingDo.getId())
+                .description(type + "하였습니다.")
                 .timeStamp(LocalDateTime.now())
                 .build();
         return activityRepository.save(activity);
