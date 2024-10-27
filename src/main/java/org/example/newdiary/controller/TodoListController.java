@@ -25,12 +25,12 @@ public class TodoListController {
         return ResponseEntity.ok().body(todoList.getName() + " 생성완료");
     }
     @PutMapping("/{listId}")
-    ResponseEntity<?> updateTodoListName(@RequestParam(name = "name") String name, @PathVariable Long listId){
+    ResponseEntity<?> updateTodoListName(@RequestParam(name = "name") String name, @PathVariable("listId") Long listId){
         TodoList todoList = todoListService.updateTodoListName(name, listId);
         return ResponseEntity.ok().body(new GetTodoListResponse(todoList));
     }
     @DeleteMapping("/{listId}")
-    ResponseEntity<?> deleteTodoList(@PathVariable Long listId){
+    ResponseEntity<?> deleteTodoList(@PathVariable("listId") Long listId){
         todoListService.deleteTodoList(listId);
         return ResponseEntity.ok().body(listId + "삭제 완료");
     }
