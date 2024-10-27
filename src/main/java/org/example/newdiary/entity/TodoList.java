@@ -21,9 +21,13 @@ public class TodoList extends Do{
     @OneToMany(mappedBy = "todoList", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     List<Todo> todoList = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     public TodoList updateName(String newName) {
         this.name = newName;
         return this;
     }
-    //todo : 이후 사용자 아이디 추가 필요
+
 }
